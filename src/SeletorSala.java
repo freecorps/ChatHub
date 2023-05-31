@@ -1,6 +1,4 @@
 import ChatHub.Client;
-import ChatHub.Sala;
-import ChatHub.Server;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,7 +125,7 @@ public class SeletorSala extends javax.swing.JFrame {
         }
 
         Map<String, String> message = new HashMap<>();
-        message.put("type", "join_room");
+        message.put("type", "joinRoom");
         message.put("room", selectedRoom);
         client.sendMessage(message);
         

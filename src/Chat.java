@@ -85,13 +85,9 @@ public class Chat extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void atualizarListaDePessoas() {
-        Sala sala = Server.getInstance(client.getServerPort()).getSala(salaSelecionada);
-        List<String> jogadores = sala.getListaJogadores();
-        ListaDePessoas.setModel(new AbstractListModel<String>() {
-            public int getSize() { return jogadores.size(); }
-            public String getElementAt(int i) { return jogadores.get(i); }
-        });
+        
     }
+
     
     private void EnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EnviarActionPerformed
         String mensagem = ChatImput.getText();
