@@ -258,9 +258,6 @@ public class Server {
             List<Sala> salas = Server.getInstance(null).getSalas();
             Map<String, String> message = new HashMap<>();
             message.put("action", "initialRoomList");
-
-            // Aqui você precisa codificar a lista de salas de alguma forma que possa ser enviada como uma string.
-            // A maneira específica de fazer isso depende de como você deseja que seja o formato da lista no cliente.
             String encodedRoomList = encodeRoomList(salas);
             message.put("roomList", encodedRoomList);
 
@@ -268,13 +265,11 @@ public class Server {
         }
 
         private String encodeRoomList(List<Sala> salas) {
-            // Codifique a lista de salas aqui
-            // Por exemplo, você pode juntar todos os nomes de sala em uma string com um delimitador específico
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < salas.size(); i++) {
                 builder.append(salas.get(i).getNome());
-                if (i < salas.size() - 1) { // Não adicione o delimitador após o último elemento
-                    builder.append(","); // Use a vírgula como delimitador
+                if (i < salas.size() - 1) {
+                    builder.append(",");
                 }
             }
             return builder.toString();

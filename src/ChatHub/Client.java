@@ -21,6 +21,7 @@ public class Client {
     private String serverAddress;
     private int serverPort;
     private List<String> salas;
+    private String salaAtual;
 
     public Client(String serverAddress, int serverPort) throws IOException, InterruptedException {
         this(serverAddress, serverPort, null);
@@ -52,6 +53,10 @@ public class Client {
     public Map<String, String> receiveMessage() throws IOException {
         String encodedMessage = in.readLine();
         return Protocol.decodeMessage(encodedMessage);
+    }
+    
+    public void setSalaAtual(String salaLegal) {
+        this.salaAtual = salaLegal;
     }
 
     public void close() throws IOException {
@@ -104,11 +109,32 @@ public class Client {
     public List<String> getSalas() {
         return salas;
     }
+    
+    public interface MessageListener {
+        void messageReceived(String message);
+    }
+
+    private MessageListener messageListener;
+
+    public void setMessageListener(MessageListener listener) {
+        this.messageListener = listener;
+    }
 
     private void processMessage(Map<String, String> message) {
         System.out.println("Message recived from the server: "+message);
 
         String action = message.get("action");
+        
+        if ("chat".equals(action) && messageListener != null) {
+            String sala = message.get("room");
+            UUID cleber = UUID.fromString(message.get("UUID"));
+            if(this.salaAtual != sala) {
+                return;
+            }
+            String content = message.get("content");
+            String mensagem = cleber+ ": " + content;
+            messageListener.messageReceived(mensagem);
+        }
 
         if (action != null) {
             switch (action) {

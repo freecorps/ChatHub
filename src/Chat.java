@@ -1,9 +1,5 @@
 
 import ChatHub.Client;
-import ChatHub.Sala;
-import ChatHub.Server;
-import java.util.List;
-import javax.swing.AbstractListModel;
 
 
 public class Chat extends javax.swing.JFrame {
@@ -15,6 +11,11 @@ public class Chat extends javax.swing.JFrame {
         initComponents();
         this.client = client;
         this.salaSelecionada = selectedRoom;
+
+        client.setMessageListener(message -> {
+            Chat.append("\n" + message);
+        });
+
         atualizarListaDePessoas();
     }
 
