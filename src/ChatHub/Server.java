@@ -74,6 +74,15 @@ public class Server {
         }
     }
     
+    public Sala getSala(String nomeSala) {
+        for (Sala sala : salas) {
+            if (sala.getNome().equals(nomeSala)) {
+                return sala;
+            }
+        }
+        return null;
+    }
+    
     public ClientHandler getClientHandler(UUID clientId) {
         return clients.get(clientId);
     }
@@ -143,7 +152,7 @@ public class Server {
                                 leaveRoom();
                                 break;
                             case "chat":
-                                processChat(message.get("chat"));
+                                processChat(message);
                                 break;
                         }
                     }
@@ -193,13 +202,14 @@ public class Server {
             }
         }
 
-        private void processChat(String chatMessage) {
+        private void processChat(Map<String, String> chatMessage) {
             if (roomName != null && rooms.containsKey(roomName)) {
                 for (ClientHandler client : rooms.get(roomName)) {
-                    client.out.println(chatMessage);
+                    client.out.println(Protocol.encodeMessage(chatMessage));
                 }
             }
-        }        
+        }   
+        
         private void disconnect() {
             leaveRoom();
             clients.remove(id);

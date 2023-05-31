@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
+import java.util.HashMap;
 
 public class Client {
     private final Socket socket;
@@ -55,6 +56,15 @@ public class Client {
         } catch (IOException e) {
             System.err.println("Error reading message from server: " + e.getMessage());
         }
+    }
+    
+    public void sendMessageToRoom(String roomName, String content) {
+        Map<String, String> message = new HashMap<>();
+        message.put("action", "chat");
+        message.put("room", roomName);
+        message.put("UUID", clientUUID.toString());
+        message.put("content", content);
+        sendMessage(message);
     }
     
     private void processMessage(Map<String, String> message) {

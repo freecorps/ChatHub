@@ -1,14 +1,21 @@
 
 import ChatHub.Client;
+import ChatHub.Sala;
+import ChatHub.Server;
+import java.util.List;
+import javax.swing.AbstractListModel;
 
 
 public class Chat extends javax.swing.JFrame {
 
     private Client client;
+    private String salaSelecionada;
     
     public Chat(Client client, String selectedRoom) {
         initComponents();
         this.client = client;
+        this.salaSelecionada = selectedRoom;
+        atualizarListaDePessoas();
     }
 
     @SuppressWarnings("unchecked")
@@ -20,6 +27,7 @@ public class Chat extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         ListaDePessoas = new javax.swing.JList<>();
         ChatImput = new javax.swing.JTextField();
+        Enviar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -37,18 +45,26 @@ public class Chat extends javax.swing.JFrame {
 
         ChatImput.setText("Clique para digitar");
 
+        Enviar.setText("Enviar");
+        Enviar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EnviarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(ChatImput)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+                    .addComponent(Enviar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -59,12 +75,32 @@ public class Chat extends javax.swing.JFrame {
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
                     .addComponent(jScrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ChatImput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ChatImput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Enviar))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void atualizarListaDePessoas() {
+        Sala sala = Server.getInstance(null).getSala(salaSelecionada);
+        List<String> jogadores = sala.getListaJogadores();
+        ListaDePessoas.setModel(new AbstractListModel<String>() {
+            public int getSize() { return jogadores.size(); }
+            public String getElementAt(int i) { return jogadores.get(i); }
+        });
+    }
+    
+    private void EnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EnviarActionPerformed
+        String mensagem = ChatImput.getText();
+        if (!mensagem.isEmpty()) {
+            client.sendMessageToRoom(salaSelecionada, mensagem);
+            Chat.append("\nVocê: " + mensagem);
+            ChatImput.setText("");
+        }
+    }//GEN-LAST:event_EnviarActionPerformed
 
     public static void main(String args[]) {
         try {
@@ -95,6 +131,7 @@ public class Chat extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea Chat;
     private javax.swing.JTextField ChatImput;
+    private javax.swing.JButton Enviar;
     private javax.swing.JList<String> ListaDePessoas;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
