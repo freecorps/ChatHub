@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.HashMap;
+import java.util.List;
 
 public class Client {
     private final Socket socket;
@@ -18,6 +20,7 @@ public class Client {
     private final CountDownLatch latch = new CountDownLatch(1);
     private String serverAddress;
     private int serverPort;
+    private List<String> salas;
 
     public Client(String serverAddress, int serverPort) throws IOException, InterruptedException {
         this(serverAddress, serverPort, null);
@@ -77,11 +80,13 @@ public class Client {
     }
     
     private void processInitialRoomList(String encodedRoomList) {
-        String[] roomNames = encodedRoomList.split(","); // Aqui estamos supondo que a lista de salas foi codificada usando vírgulas como delimitadores
+        String[] roomNames = encodedRoomList.split(","); 
         for (String roomName : roomNames) {
             System.out.println("Room: " + roomName);
         }
+        this.salas = Arrays.asList(roomNames);
     }
+
     
     public void sendMessageToRoom(String roomName, String content) {
         Map<String, String> message = new HashMap<>();
@@ -92,6 +97,14 @@ public class Client {
         sendMessage(message);
     }
     
+    public void atualizarListaDeSalas(List<String> salas) {
+        this.salas = salas;
+    }
+    
+    public List<String> getSalas() {
+        return salas;
+    }
+
     private void processMessage(Map<String, String> message) {
         System.out.println("Message recived from the server: "+message);
 
@@ -104,6 +117,11 @@ public class Client {
                     break;
                 case "initialRoomList":
                     processInitialRoomList(message.get("roomList"));
+                    break;
+                case "updateRoomList":
+                    String roomsString = message.get("rooms");
+                    List<String> rooms = Arrays.asList(roomsString.split(","));
+                    atualizarListaDeSalas(rooms);
                     break;
             }
         }

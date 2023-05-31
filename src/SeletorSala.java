@@ -96,9 +96,9 @@ public class SeletorSala extends javax.swing.JFrame {
     }//GEN-LAST:event_CriarSalaActionPerformed
 
     public void atualizarListaDeSalas() {
-        List<Sala> salas = Server.getInstance(client.getServerPort()).getSalas();
+        List<String> salas = client.getSalas();
         if (salas != null) {
-            String[] nomesDasSalas = salas.stream().map(Sala::getNome).toArray(String[]::new);
+            String[] nomesDasSalas = salas.toArray(new String[0]);
 
             // Agendamos a atualização para a thread do despachante de eventos
             SwingUtilities.invokeLater(new Runnable() {
@@ -113,6 +113,8 @@ public class SeletorSala extends javax.swing.JFrame {
             System.out.println("A lista de salas ainda não está disponível.");
         }
     }
+
+
 
   
     

@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class Server {
     private int port;
@@ -62,10 +63,23 @@ public class Server {
 
     public void addSala(Sala sala) {
         salas.add(sala);
+        sendRoomListToAllClients();
     }
 
     public void removeSala(Sala sala) {
         salas.remove(sala);
+        sendRoomListToAllClients();
+    }
+
+    
+    public void sendRoomListToAllClients() {
+        Map<String, String> message = new HashMap<>();
+        message.put("action", "updateRoomList");
+        message.put("rooms", String.join(",", salas.stream().map(Sala::getNome).collect(Collectors.toList())));
+
+        for (ClientHandler client : clients.values()) {
+            client.out.println(Protocol.encodeMessage(message));
+        }
     }
     
     public void joinRoom(UUID clientId, String roomName) {
