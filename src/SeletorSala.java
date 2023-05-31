@@ -25,6 +25,7 @@ public class SeletorSala extends javax.swing.JFrame {
         Conectar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         ListaDeSalas = new javax.swing.JList<>();
+        Atualizar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -49,6 +50,13 @@ public class SeletorSala extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(ListaDeSalas);
 
+        Atualizar.setText("Atualizar");
+        Atualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AtualizarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -57,9 +65,10 @@ public class SeletorSala extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(CriarSala, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(Conectar, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(CriarSala, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Conectar, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(Atualizar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -70,6 +79,8 @@ public class SeletorSala extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(CriarSala)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Atualizar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(Conectar)))
                 .addContainerGap())
@@ -118,6 +129,10 @@ public class SeletorSala extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_ConectarActionPerformed
 
+    private void AtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AtualizarActionPerformed
+        atualizarListaDeSalas();
+    }//GEN-LAST:event_AtualizarActionPerformed
+
     public static void main(String args[]) {
 
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -151,6 +166,7 @@ public class SeletorSala extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Atualizar;
     private javax.swing.JButton Conectar;
     private javax.swing.JToggleButton CriarSala;
     private javax.swing.JList<String> ListaDeSalas;
