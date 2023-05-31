@@ -28,7 +28,7 @@ public class Client {
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
         if(serverReadyLatch != null) {
-            serverReadyLatch.await(); // Only wait if a latch was provided
+            serverReadyLatch.await();
         }
         new Thread(this::messageListener).start();
     }
@@ -76,6 +76,13 @@ public class Client {
         }
     }
     
+    private void processInitialRoomList(String encodedRoomList) {
+        String[] roomNames = encodedRoomList.split(","); // Aqui estamos supondo que a lista de salas foi codificada usando vírgulas como delimitadores
+        for (String roomName : roomNames) {
+            System.out.println("Room: " + roomName);
+        }
+    }
+    
     public void sendMessageToRoom(String roomName, String content) {
         Map<String, String> message = new HashMap<>();
         message.put("action", "chat");
@@ -86,9 +93,8 @@ public class Client {
     }
     
     private void processMessage(Map<String, String> message) {
-        
         System.out.println("Message recived from the server: "+message);
-        
+
         String action = message.get("action");
 
         if (action != null) {
@@ -96,8 +102,10 @@ public class Client {
                 case "setUUID":
                     setClientUUID(UUID.fromString(message.get("UUID")));
                     break;
+                case "initialRoomList":
+                    processInitialRoomList(message.get("roomList"));
+                    break;
             }
         }
     }
-    
 }
