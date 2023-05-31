@@ -26,18 +26,20 @@ public class Server {
     private List<Sala> salas;
 
     private static Server instance;
-
+    private static int defaultPort = 12345;
+    
     public static Server getInstance(Integer serverPort) {
         if (instance == null) {
             if (serverPort == null) {
                 try {
-                    instance = new Server(instance.port);
+                    instance = new Server(defaultPort);
                 } catch (IOException ex) {
                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
                 try {
                     instance = new Server(serverPort);
+                    defaultPort = serverPort; // Atualize a porta padrão
                 } catch (IOException ex) {
                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                 }
