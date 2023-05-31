@@ -84,7 +84,7 @@ public class SeletorSala extends javax.swing.JFrame {
     }//GEN-LAST:event_CriarSalaActionPerformed
 
     public void atualizarListaDeSalas() {
-        List<Sala> salas = Server.getInstance(null).getSalas();
+        List<Sala> salas = Server.getInstance(client.getServerPort()).getSalas();
         if (salas != null) {
             System.out.println(salas);
             String[] nomesDasSalas = salas.stream().map(Sala::getNome).toArray(String[]::new);

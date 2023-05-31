@@ -85,7 +85,7 @@ public class Chat extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void atualizarListaDePessoas() {
-        Sala sala = Server.getInstance(null).getSala(salaSelecionada);
+        Sala sala = Server.getInstance(client.getServerPort()).getSala(salaSelecionada);
         List<String> jogadores = sala.getListaJogadores();
         ListaDePessoas.setModel(new AbstractListModel<String>() {
             public int getSize() { return jogadores.size(); }

@@ -83,11 +83,11 @@ public class CriarSala extends javax.swing.JFrame {
         Sala novaSala = new Sala(nomeDaSala);
 
         // Adiciona a nova sala ao servidor
-        Server.getInstance(null).addSala(novaSala);
+        Server.getInstance(client.getServerPort()).addSala(novaSala);
         seletorSala.atualizarListaDeSalas();
         try {
             // Envia uma mensagem ao servidor para entrar na sala
-            Server.getInstance(null).joinRoom(client.getClientUUID(), nomeDaSala);
+            Server.getInstance(client.getServerPort()).joinRoom(client.getClientUUID(), nomeDaSala);
         } catch (InterruptedException ex) {
             Logger.getLogger(CriarSala.class.getName()).log(Level.SEVERE, null, ex);
         }

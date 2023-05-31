@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -19,6 +20,7 @@ import java.util.logging.Logger;
 
 public class Server {
     private int port;
+    private CountDownLatch serverReadyLatch;
     private ServerSocket serverSocket;
     private ExecutorService threadPool;
     private ConcurrentHashMap<String, List<ClientHandler>> rooms;
@@ -29,24 +31,30 @@ public class Server {
     private static int defaultPort = 12345;
     
     public static Server getInstance(Integer serverPort) {
+        CountDownLatch serverReadyLatch = new CountDownLatch(1);
         if (instance == null) {
             if (serverPort == null) {
                 try {
-                    instance = new Server(defaultPort);
+                    instance = new Server(defaultPort, serverReadyLatch);
                 } catch (IOException ex) {
                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
                 try {
-                    instance = new Server(serverPort);
+                    instance = new Server(serverPort, serverReadyLatch);
                     defaultPort = serverPort; // Atualize a porta padrão
                 } catch (IOException ex) {
                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            // Agora o servidor deve ser iniciado em uma thread separada
+            new Thread(() -> {
+                instance.start(); // Executa o servidor em uma thread separada
+            }).start();
         }
         return instance;
     }
+
 
     public List<Sala> getSalas() {
         return salas;
@@ -89,7 +97,8 @@ public class Server {
         return clients.get(clientId);
     }
     
-    public Server(int serverPort) throws IOException {
+    public Server(int serverPort, CountDownLatch serverReadyLatch) throws IOException {
+        this.serverReadyLatch = serverReadyLatch;
         this.port = serverPort;
         serverSocket = new ServerSocket(serverPort);
         threadPool = Executors.newCachedThreadPool();
@@ -98,8 +107,9 @@ public class Server {
         salas = new ArrayList<>();
     }
      
-    public void start() {
+        public void start() {
         System.out.println("Server started on port " + serverSocket.getLocalPort());
+        serverReadyLatch.countDown(); // Signal that the server is ready
 
         while (true) {
             try {
@@ -232,12 +242,23 @@ public class Server {
 
     public static void main(String[] args) {
         int serverPort = 12345;
+        CountDownLatch serverReadyLatch = new CountDownLatch(1);
 
         try {
-            Server server = new Server(serverPort);
-            server.start();
+            instance = new Server(serverPort, serverReadyLatch); // Pass the latch to the Server
+            new Thread(() -> {
+                instance.start(); // Run the server in a separate thread
+            }).start();
+
+            try {
+                // Create the client and pass the latch to it
+                Client client = new Client("localhost", serverPort, serverReadyLatch);
+            } catch (InterruptedException e) {
+                System.err.println("Interrupted while waiting for the server to start: " + e.getMessage());
+            }
+
         } catch (IOException e) {
             System.err.println("Error starting server: " + e.getMessage());
-        } 
-    } 
+        }
+    }
 }

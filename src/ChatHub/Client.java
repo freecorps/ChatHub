@@ -16,14 +16,32 @@ public class Client {
     private final PrintWriter out;
     private UUID clientUUID;
     private final CountDownLatch latch = new CountDownLatch(1);
+    private String serverAddress;
+    private int serverPort;
 
-    public Client(String serverAddress, int serverPort) throws IOException {
+    public Client(String serverAddress, int serverPort) throws IOException, InterruptedException {
+        this(serverAddress, serverPort, null);
+    }
+
+    public Client(String serverAddress, int serverPort, CountDownLatch serverReadyLatch) throws IOException, InterruptedException {
         socket = new Socket(serverAddress, serverPort);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
+        if(serverReadyLatch != null) {
+            serverReadyLatch.await(); // Only wait if a latch was provided
+        }
         new Thread(this::messageListener).start();
     }
 
+
+    public String getServerAddress() {
+        return serverAddress;
+    }
+
+    public int getServerPort() {
+        return serverPort;
+    }
+    
     public void sendMessage(Map<String, String> message) {
         out.println(Protocol.encodeMessage(message));
     }
