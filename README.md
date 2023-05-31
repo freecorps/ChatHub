@@ -11,7 +11,7 @@ ChatHub é um sistema de chat simples em Java. Ele usa sockets para comunicar en
 ## Como rodar
 
 1. Compile o arquivo `ChatHub.java`
-2. Rode o arquivo `ChatHub.java` com a porta desejada. Exemplo: `java Server 12345`
+2. Rode o arquivo `ChatHub.java`
 
 ## Como usar
 
