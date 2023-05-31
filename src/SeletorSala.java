@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 
 public class SeletorSala extends javax.swing.JFrame {
@@ -97,16 +98,22 @@ public class SeletorSala extends javax.swing.JFrame {
     public void atualizarListaDeSalas() {
         List<Sala> salas = Server.getInstance(client.getServerPort()).getSalas();
         if (salas != null) {
-            System.out.println(salas);
             String[] nomesDasSalas = salas.stream().map(Sala::getNome).toArray(String[]::new);
-            ListaDeSalas.setModel(new javax.swing.AbstractListModel<String>() {
-                public int getSize() { return nomesDasSalas.length; }
-                public String getElementAt(int i) { return nomesDasSalas[i]; }
+
+            // Agendamos a atualização para a thread do despachante de eventos
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    ListaDeSalas.setModel(new javax.swing.AbstractListModel<String>() {
+                        public int getSize() { return nomesDasSalas.length; }
+                        public String getElementAt(int i) { return nomesDasSalas[i]; }
+                    });
+                }
             });
         } else {
             System.out.println("A lista de salas ainda não está disponível.");
         }
     }
+
   
     
     private void ConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConectarActionPerformed
