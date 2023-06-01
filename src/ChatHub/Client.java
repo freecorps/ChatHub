@@ -23,7 +23,7 @@ public class Client {
     private int serverPort;
     private List<String> salas;
     private String salaAtual;
-    private String username;
+    public String username;
 
     public Client(String serverAddress, int serverPort) throws IOException, InterruptedException {
         this(serverAddress, serverPort, null);
@@ -157,7 +157,7 @@ public class Client {
                     String sala = message.get("room");
                     if (this.salaAtual.equals(sala)) {
                         String content = message.get("content");
-                        String mensagem = this.username + ": " + content;
+                        String mensagem = content;
                         messageListener.messageReceived(mensagem);
                     }
                 }

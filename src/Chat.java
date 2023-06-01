@@ -16,8 +16,6 @@ public class Chat extends javax.swing.JFrame {
         client.setMessageListener(message -> {
             Chat.append("\n" + message);
         });
-
-        atualizarListaDePessoas();
     }
 
     @SuppressWarnings("unchecked")
@@ -73,16 +71,11 @@ public class Chat extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void atualizarListaDePessoas() {
-        
-    }
-
-    
+  
     private void EnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EnviarActionPerformed
         String mensagem = ChatImput.getText();
         if (!mensagem.isEmpty()) {
-            client.sendMessageToRoom(salaSelecionada, mensagem);
+            client.sendMessageToRoom(salaSelecionada, client.username+ ": " + mensagem);
             ChatImput.setText("");
         }
     }//GEN-LAST:event_EnviarActionPerformed
