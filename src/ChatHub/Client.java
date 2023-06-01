@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class Client {
     private final Socket socket;
@@ -22,6 +23,7 @@ public class Client {
     private int serverPort;
     private List<String> salas;
     private String salaAtual;
+    private String username;
 
     public Client(String serverAddress, int serverPort) throws IOException, InterruptedException {
         this(serverAddress, serverPort, null);
@@ -65,6 +67,7 @@ public class Client {
 
     public void setClientUUID(UUID clientUUID) {
         this.clientUUID = clientUUID;
+        this.username = generateUserName();
         latch.countDown();
     }
 
@@ -90,6 +93,18 @@ public class Client {
             System.out.println("Room: " + roomName);
         }
         this.salas = Arrays.asList(roomNames);
+    }
+
+    // No código do cliente, adicione estas listas
+    private List<String> adjectives = Arrays.asList("Fast", "Slow", "Big", "Small", "Red", "Blue", "Green", "Yellow");
+    private List<String> nouns = Arrays.asList("Elephant", "Giraffe", "Lion", "Tiger", "Bear", "Fox", "Wolf", "Rabbit");
+    private Random random = new Random();
+
+    // Método para gerar um nome de usuário aleatório
+    private String generateUserName() {
+        String adjective = adjectives.get(random.nextInt(adjectives.size()));
+        String noun = nouns.get(random.nextInt(nouns.size()));
+        return adjective + " " + noun;
     }
 
     
@@ -140,14 +155,10 @@ public class Client {
             case "chat":
                 if (messageListener != null) {
                     String sala = message.get("room");
-                    System.out.println("cheguei aq");
                     if (this.salaAtual.equals(sala)) {
-                        System.out.println("cheguei aq 2");
-                        UUID cleber = UUID.fromString(message.get("UUID"));
                         String content = message.get("content");
-                        String mensagem = cleber + ": " + content;
+                        String mensagem = this.username + ": " + content;
                         messageListener.messageReceived(mensagem);
-                        System.out.println("cheguei aq 3");
                     }
                 }
                 break;

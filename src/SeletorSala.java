@@ -111,10 +111,6 @@ public class SeletorSala extends javax.swing.JFrame {
             System.out.println("A lista de salas ainda não está disponível.");
         }
     }
-
-
-
-  
     
     private void ConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConectarActionPerformed
         String selectedRoom = ListaDeSalas.getSelectedValue();
