@@ -26,6 +26,7 @@ public class Server {
     private ExecutorService threadPool;
     private ConcurrentHashMap<String, List<ClientHandler>> rooms;
     private ConcurrentHashMap<UUID, ClientHandler> clients;
+    private List<ClientHandler> allClients = new ArrayList<>();
     private List<Sala> salas;
 
     private static Server instance;
@@ -71,6 +72,15 @@ public class Server {
         sendRoomListToAllClients();
     }
 
+    // Quando um ClientHandler se conecta, adicione-o à lista
+    public void addClient(ClientHandler client) {
+        allClients.add(client);
+    }
+
+    // Quando um ClientHandler se desconecta, remova-o da lista
+    public void removeClient(ClientHandler client) {
+        allClients.remove(client);
+    }
     
     public void sendRoomListToAllClients() {
         Map<String, String> message = new HashMap<>();
@@ -122,21 +132,22 @@ public class Server {
     }
      
         public void start() {
-        System.out.println("Server started on port " + serverSocket.getLocalPort());
-        serverReadyLatch.countDown(); // Signal that the server is ready
+            System.out.println("Server started on port " + serverSocket.getLocalPort());
+            serverReadyLatch.countDown(); // Signal that the server is ready
 
-        while (true) {
-            try {
-                Socket clientSocket = serverSocket.accept();
-                ClientHandler clientHandler = new ClientHandler(clientSocket);
-                clients.put(clientHandler.getId(), clientHandler);
-                clientHandler.sendUUIDToClient();
-                threadPool.submit(clientHandler);
-            } catch (IOException e) {
-                System.err.println("Error accepting client connection: " + e.getMessage());
+            while (true) {
+                try {
+                    Socket clientSocket = serverSocket.accept();
+                    ClientHandler clientHandler = new ClientHandler(clientSocket);
+                    clients.put(clientHandler.getId(), clientHandler);
+                    addClient(clientHandler); // Adicione esta linha
+                    clientHandler.sendUUIDToClient();
+                    threadPool.submit(clientHandler);
+                } catch (IOException e) {
+                    System.err.println("Error accepting client connection: " + e.getMessage());
+                }
             }
         }
-    }
 
     private class ClientHandler implements Runnable {
         private Socket clientSocket;
@@ -231,16 +242,16 @@ public class Server {
         }
 
         private void processChat(Map<String, String> chatMessage) {
-            if (roomName != null && rooms.containsKey(roomName)) {
-                for (ClientHandler client : rooms.get(roomName)) {
-                    client.out.println(Protocol.encodeMessage(chatMessage));
-                }
+            for (ClientHandler client : allClients) {
+                client.out.println(Protocol.encodeMessage(chatMessage));
             }
-        }   
+        }
+  
         
         private void disconnect() {
             leaveRoom();
             clients.remove(id);
+            Server.getInstance(null).removeClient(this); // Adicione esta linha
 
             try {
                 in.close();
@@ -286,13 +297,6 @@ public class Server {
             new Thread(() -> {
                 instance.start(); // Run the server in a separate thread
             }).start();
-
-            try {
-                // Create the client and pass the latch to it
-                Client client = new Client("localhost", serverPort, serverReadyLatch);
-            } catch (InterruptedException e) {
-                System.err.println("Interrupted while waiting for the server to start: " + e.getMessage());
-            }
 
         } catch (IOException e) {
             System.err.println("Error starting server: " + e.getMessage());

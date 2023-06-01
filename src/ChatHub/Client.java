@@ -124,18 +124,6 @@ public class Client {
         System.out.println("Message recived from the server: "+message);
 
         String action = message.get("action");
-        
-        if ("chat".equals(action) && messageListener != null) {
-            System.out.println("cheguei aq");
-            String sala = message.get("room");
-            UUID cleber = UUID.fromString(message.get("UUID"));
-            if(this.salaAtual != sala) {
-                return;
-            }
-            String content = message.get("content");
-            String mensagem = cleber+ ": " + content;
-            messageListener.messageReceived(mensagem);
-        }
 
         switch (action) {
             case "setUUID":
@@ -152,11 +140,14 @@ public class Client {
             case "chat":
                 if (messageListener != null) {
                     String sala = message.get("room");
+                    System.out.println("cheguei aq");
                     if (this.salaAtual.equals(sala)) {
+                        System.out.println("cheguei aq 2");
                         UUID cleber = UUID.fromString(message.get("UUID"));
                         String content = message.get("content");
                         String mensagem = cleber + ": " + content;
                         messageListener.messageReceived(mensagem);
+                        System.out.println("cheguei aq 3");
                     }
                 }
                 break;

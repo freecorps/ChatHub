@@ -11,8 +11,10 @@ public class Chat extends javax.swing.JFrame {
         initComponents();
         this.client = client;
         this.salaSelecionada = selectedRoom;
+        client.setSalaAtual(selectedRoom);
 
         client.setMessageListener(message -> {
+            System.out.println("cheguei aq 4");
             Chat.append("\n" + message);
         });
 
