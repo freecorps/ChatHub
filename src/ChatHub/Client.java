@@ -126,6 +126,7 @@ public class Client {
         String action = message.get("action");
         
         if ("chat".equals(action) && messageListener != null) {
+            System.out.println("cheguei aq");
             String sala = message.get("room");
             UUID cleber = UUID.fromString(message.get("UUID"));
             if(this.salaAtual != sala) {
@@ -136,20 +137,29 @@ public class Client {
             messageListener.messageReceived(mensagem);
         }
 
-        if (action != null) {
-            switch (action) {
-                case "setUUID":
-                    setClientUUID(UUID.fromString(message.get("UUID")));
-                    break;
-                case "initialRoomList":
-                    processInitialRoomList(message.get("roomList"));
-                    break;
-                case "updateRoomList":
-                    String roomsString = message.get("rooms");
-                    List<String> rooms = Arrays.asList(roomsString.split(","));
-                    atualizarListaDeSalas(rooms);
-                    break;
-            }
+        switch (action) {
+            case "setUUID":
+                setClientUUID(UUID.fromString(message.get("UUID")));
+                break;
+            case "initialRoomList":
+                processInitialRoomList(message.get("roomList"));
+                break;
+            case "updateRoomList":
+                String roomsString = message.get("rooms");
+                List<String> rooms = Arrays.asList(roomsString.split(","));
+                atualizarListaDeSalas(rooms);
+                break;
+            case "chat":
+                if (messageListener != null) {
+                    String sala = message.get("room");
+                    if (this.salaAtual.equals(sala)) {
+                        UUID cleber = UUID.fromString(message.get("UUID"));
+                        String content = message.get("content");
+                        String mensagem = cleber + ": " + content;
+                        messageListener.messageReceived(mensagem);
+                    }
+                }
+                break;
         }
     }
 }

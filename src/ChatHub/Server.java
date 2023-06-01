@@ -179,6 +179,7 @@ public class Server {
                                 leaveRoom();
                                 break;
                             case "chat":
+                                System.out.println("enviando chat");
                                 processChat(message);
                                 break;
                         }
